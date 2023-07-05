@@ -14,8 +14,8 @@ from brownie.network.gas.strategies import LinearScalingStrategy
 FORKED_LOCAL_ENVIROMWNTS = ["mainnet_fork"]
 LOCAL_BLOCKCHAIN_ENVIROMENTS = ["development"]
 
-gas_strategy = LinearScalingStrategy("60 gwei", "90 gwei", 1.125)
-gas_price = gas_strategy
+gas_strategy = LinearScalingStrategy("1 gwei", "200 gwei", 1.125)
+gas_price(gas_strategy)
 
 
 def get_account(index=None, id=None):
@@ -63,11 +63,11 @@ def deploy_mocks():
     print("Deploying Mocks...")
     account = get_account()
     MockV3Aggregator.deploy(
-        DECIMALS, INITIAL_VALUE, {"from": account, "price": gas_strategy}
+        DECIMALS, INITIAL_VALUE, {"from": account, "gas_price": gas_strategy}
     )
-    link_token = LinkToken.deploy({"from": account, "price": gas_strategy})
+    link_token = LinkToken.deploy({"from": account, "gas_price": gas_strategy})
     VRFCoordinatorMock.deploy(
-        link_token.address, {"from": account, "price": gas_strategy}
+        link_token.address, {"from": account, "gas_price": gas_strategy}
     )
     print("Mocks Deployed!")
 

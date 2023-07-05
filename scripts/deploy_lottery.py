@@ -4,8 +4,8 @@ from brownie.network.gas.strategies import LinearScalingStrategy
 from scripts.helpfull_scripts import get_account, get_contract, fund_with_link
 import time
 
-gas_strategy = LinearScalingStrategy("60 gwei", "90 gwei", 1.125)
-gas_price = gas_strategy
+gas_strategy = LinearScalingStrategy("10 gwei", "200 gwei", 1.125)
+gas_price( gas_strategy)
 
 
 def deploy_lottery():
@@ -16,7 +16,7 @@ def deploy_lottery():
         get_contract("link_token").address,
         config["networks"][network.show_active()]["fee"],
         config["networks"][network.show_active()]["keyhash"],
-        {"from": account, "price": gas_strategy},
+        {"from": account, "gas_price": gas_strategy},
         publish_source=config["networks"][network.show_active()].get("verify", False),
     )
     print("Deployed lottery!!!")
@@ -45,9 +45,9 @@ def end_lottery():
     lottery = Lottery[-1]
     tx = fund_with_link(lottery.address)
     tx.wait(1)
-    ending_transaction = lottery.endLottery({"from": account})
+    ending_transaction = lottery.endLottery({"from": account,"gas_limit": 1000000, "allow_revert":True})
     ending_transaction.wait(1)
-    time.sleep(60)
+    time.sleep(180)
     print(f"{lottery.recentWinner()} is the new winner!!!")
 
 
